@@ -135,21 +135,34 @@ router.route('/movies')
         // HTTP PUT Method
         // Requires JWT authentication.
         // Returns a JSON object with status, message, headers, query, and env.
-        film = req.body;
-        if (!film || !film.title) {
+        const film = req.body;
+        if (!film || !film.id) {
             return res.status(400).json({       
                 status: 400,
-                message: 'Movie title is required',
+                message: 'Movie id is required',
                 headers: req.headers,
                 query: req.query,
                 env: process.env.UNIQUE_KEY
             });
         }
-        db.update(film.id, film);
-        var o = getJSONObjectForMovieRequirement(req);
-        o.status = 200;
-        o.message = "movie updated";
-        res.json(o);
+        const updated = db.update(film.id, film);
+        if (!updated) {
+            return res.status(404).json({
+                status: 404,
+                message: 'Movie not found',
+                headers: req.headers,
+                query: req.query,
+                env: process.env.UNIQUE_KEY
+            });
+        }
+        res.status(200).json({
+            status: 200,
+            message: 'movie updated',
+            movie: updated,
+            headers: req.headers,
+            query: req.query,
+            env: process.env.UNIQUE_KEY
+        });
     })
     .delete(authController.isAuthenticated, (req, res) => {
         // HTTP DELETE Method

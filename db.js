@@ -56,17 +56,16 @@ module.exports = function () {
         /*
          * Update a movie with the given id
          */
-        update: function (id, user) {
-            var userIndex = this.userList.findIndex(function (element) {
+        update: function (id, movie) {
+            var movieIndex = this.userList.findIndex(function (element) {
                 return element.id === id;
             });
-            if (userIndex !== -1) {
-                this.userList[userIndex].username = user.username;
-                this.userList[userIndex].password = user.password;
-                return 1;
-            }
-            else {
-                return 0;
+            if (movieIndex !== -1) {
+                // Update all fields in the movie object
+                Object.assign(this.userList[movieIndex], movie);
+                return this.userList[movieIndex];
+            } else {
+                return null;
             }
         }
     };
