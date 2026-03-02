@@ -42,6 +42,7 @@ function getJSONObjectForMovieRequirement(req) {
 }
 
 router.post('/signup', (req, res) => {
+
     if (!req.body.username || !req.body.password) {
         res.json({success: false, msg: 'Please include both username and password to signup.'})
     } else {
@@ -93,6 +94,50 @@ router.route('/testcollection')
         res.json(o);
     }
     );
+router.route('/movies')
+    .get((req, res) => {
+    
+        res.status(200).json({
+            status: 200,
+            message: 'GET movies',
+            headers: req.headers,
+            query: req.query,
+            env: process.env.UNIQUE_KEY
+        });
+    })
+    .post((req, res) => {
+        res.status(200).json({
+            status: 200,
+            message: 'movie saved',
+            headers: req.headers,
+            query: req.query,
+            env: process.env.UNIQUE_KEY
+
+        });
+    })
+    .put(authJwtController.isAuthenticated, (req, res) => {
+        // HTTP PUT Method
+        // Requires JWT authentication.
+        // Returns a JSON object with status, message, headers, query, and env.
+        var o = getJSONObjectForMovieRequirement(req);
+        o.status = 200;
+        o.message = "movie updated";
+        res.json(o);
+    })
+    .delete(authController.isAuthenticated, (req, res) => {
+        // HTTP DELETE Method
+        // Requires Basic authentication.
+        // Returns a JSON object with status, message, headers, query, and env.
+        var o = getJSONObjectForMovieRequirement(req);
+        o.status = 200;
+        o.message = "movie deleted";
+        res.json(o);
+    })
+    .all((req, res) => {
+        // Any other HTTP Method
+        // Returns a message stating that the HTTP method is unsupported.
+        res.status(405).send({ message: 'HTTP method not supported.' });
+    });
     
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
