@@ -119,7 +119,18 @@ router.route('/movies')
             env: process.env.UNIQUE_KEY
         });
     })
-   
+    .get((req, res) => {
+        // Return all movies (currently stored in userList)
+        const movies = db.find();
+        res.status(200).json({
+            status: 200,
+            message: 'movies retrieved',
+            movies: movies,
+            headers: req.headers,
+            query: req.query,
+            env: process.env.UNIQUE_KEY
+        });
+    })
     .put(authJwtController.isAuthenticated, (req, res) => {
         // HTTP PUT Method
         // Requires JWT authentication.
