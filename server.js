@@ -51,13 +51,13 @@ router.post('/signup', (req, res) => {
             password: req.body.password
         };
 
-        db.save(newUser); //no duplicate checking
+        db.saveUser(newUser); //no duplicate checking
         res.json({success: true, msg: 'Successfully created new user.'})
     }
 });
 
 router.post('/signin', (req, res) => {
-    var user = db.findOne(req.body.username);
+    var user = db.findUser(req.body.username);
 
     if (!user) {
         res.status(401).send({success: false, msg: 'Authentication failed. User not found.'});
@@ -92,9 +92,12 @@ router.route('/testcollection')
         }
         var o = getJSONObjectForMovieRequirement(req);
         res.json(o);
+        db.saveMovie(req.body);    
+
     }
-    );
-                db.saveMovie(movie);
+)
+                
+router.route('/movies')
     .post((req, res) => {
         // Add a new movie to the list
         const movie = req.body;
@@ -107,13 +110,12 @@ router.route('/testcollection')
                 env: process.env.UNIQUE_KEY
             });
         }
-        db.save(movie);
+        db.saveMovie(movie);
                 const movies = db.findMovie();
         res.status(200).json({
             status: 200,
             message: 'movie saved',
             movie: movie,
-            movies: movies,
             headers: req.headers,
             query: req.query,
             env: process.env.UNIQUE_KEY
@@ -121,7 +123,7 @@ router.route('/testcollection')
     })
     .get((req, res) => {
         // Return all movies (currently stored in userList)
-        const movies = db.find();
+        const movies = db.findMovie();
         res.status(200).json({
             status: 200,
             message: 'movies retrieved',
@@ -132,7 +134,6 @@ router.route('/testcollection')
         });
     })
     .put(authJwtController.isAuthenticated, (req, res) => {
-                const updated = db.updateMovie(film.id, film);
         // Requires JWT authentication.
         // Returns a JSON object with status, message, headers, query, and env.
         const film = req.body;
@@ -145,7 +146,7 @@ router.route('/testcollection')
                 env: process.env.UNIQUE_KEY
             });
         }
-        const updated = db.update(film.id, film);
+        const updated = db.updateMovie(film.id, film);
         if (!updated) {
             return res.status(404).json({
                 status: 404,
@@ -179,7 +180,7 @@ router.route('/testcollection')
             });
         }
         else{
-        db.delete(film);
+        db.removeMovie(film);
         var o = getJSONObjectForMovieRequirement(req);
         o.status = 200;
         o.message = "movie deleted";

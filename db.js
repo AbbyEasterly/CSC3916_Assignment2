@@ -1,3 +1,4 @@
+        
 /**
  * Created by shawnmccarthy on 1/22/17.
  */
@@ -38,6 +39,15 @@ module.exports = function () {
                 });
             } else {
                 return this.userList;
+            }
+        },
+        findUserById: function (id) {
+            if (id) {
+                return this.userList.find(function (element) {
+                    return element.id === id;
+                });
+            } else {
+                return null;
             }
         },
         /*
