@@ -95,32 +95,46 @@ router.route('/testcollection')
     }
     );
 router.route('/movies')
-    .get((req, res) => {
-        // Return all movies (currently stored in userList)
+    .post((req, res) => {
+        // Add a new movie to the list
+        const movie = req.body;
+        if (!movie || !movie.title) {
+            return res.status(400).json({
+                status: 400,
+                message: 'Movie title is required',
+                headers: req.headers,
+                query: req.query,
+                env: process.env.UNIQUE_KEY
+            });
+        }
+        db.save(movie);
         const movies = db.find();
         res.status(200).json({
             status: 200,
-            message: 'movies retrieved',
+            message: 'movie saved',
+            movie: movie,
             movies: movies,
             headers: req.headers,
             query: req.query,
             env: process.env.UNIQUE_KEY
         });
     })
-    .post((req, res) => {
-        res.status(200).json({
-            status: 200,
-            message: 'movie saved',
-            headers: req.headers,
-            query: req.query,
-            env: process.env.UNIQUE_KEY
-
-        });
-    })
+   
     .put(authJwtController.isAuthenticated, (req, res) => {
         // HTTP PUT Method
         // Requires JWT authentication.
         // Returns a JSON object with status, message, headers, query, and env.
+        film = req.body;
+        if (!film || !film.title) {
+            return res.status(400).json({       
+                status: 400,
+                message: 'Movie title is required',
+                headers: req.headers,
+                query: req.query,
+                env: process.env.UNIQUE_KEY
+            });
+        }
+        db.update(film.id, film);
         var o = getJSONObjectForMovieRequirement(req);
         o.status = 200;
         o.message = "movie updated";
@@ -130,10 +144,22 @@ router.route('/movies')
         // HTTP DELETE Method
         // Requires Basic authentication.
         // Returns a JSON object with status, message, headers, query, and env.
+        film = req.body;
+        if (!film || !film.title) {
+            return res.status(400).json({
+                status: 400,
+                message: 'Movie title is required',
+                headers: req.headers,
+                query: req.query,  
+                env: process.env.UNIQUE_KEY
+            });
+        }
+        else{
+        db.delete(film);
         var o = getJSONObjectForMovieRequirement(req);
         o.status = 200;
         o.message = "movie deleted";
-        res.json(o);
+        res.json(o);}
     })
     .all((req, res) => {
         // Any other HTTP Method
