@@ -96,10 +96,12 @@ router.route('/testcollection')
     );
 router.route('/movies')
     .get((req, res) => {
-    
+        // Return all movies (currently stored in userList)
+        const movies = db.find();
         res.status(200).json({
             status: 200,
-            message: 'GET movies',
+            message: 'movies retrieved',
+            movies: movies,
             headers: req.headers,
             query: req.query,
             env: process.env.UNIQUE_KEY
