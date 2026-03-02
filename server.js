@@ -94,7 +94,7 @@ router.route('/testcollection')
         res.json(o);
     }
     );
-router.route('/movies')
+                db.saveMovie(movie);
     .post((req, res) => {
         // Add a new movie to the list
         const movie = req.body;
@@ -108,7 +108,7 @@ router.route('/movies')
             });
         }
         db.save(movie);
-        const movies = db.find();
+                const movies = db.findMovie();
         res.status(200).json({
             status: 200,
             message: 'movie saved',
@@ -132,7 +132,7 @@ router.route('/movies')
         });
     })
     .put(authJwtController.isAuthenticated, (req, res) => {
-        // HTTP PUT Method
+                const updated = db.updateMovie(film.id, film);
         // Requires JWT authentication.
         // Returns a JSON object with status, message, headers, query, and env.
         const film = req.body;
